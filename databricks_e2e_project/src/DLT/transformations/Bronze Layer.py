@@ -1,8 +1,8 @@
-import dlt
+from pyspark import pipelines as dp
 from pyspark.sql.functions import *
 
 def create_bronze_layer(src_name):
-    @dlt.table(
+    @dp.table(
         name=f'{src_name}'
     )
     def bronze_table():
@@ -13,7 +13,6 @@ def create_bronze_layer(src_name):
                 .option('cloudFiles.schemaEvolutionMode','rescue')\
                 .load(f'/Volumes/pysparkdbt/source/source_data/{src_name}/')
         
-        # df = df.withColumn('source_file',col('_metadata.file_name')).withColumn('ingestion_time',current_timestamp())
 
         #Add columns for debugging
         df = df.withColumns({
@@ -23,9 +22,6 @@ def create_bronze_layer(src_name):
 
         return df
     
-    # bronze_table.__name__ = f'bronze_{src_name}'
-    # return bronze_table
-
 #read source metadata
 files = dbutils.fs.ls('/Volumes/pysparkdbt/source/source_data')
 
